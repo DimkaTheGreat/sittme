@@ -132,6 +132,7 @@ func (tr *Translation) runTimer(timeout int) {
 			rwMutex := &sync.RWMutex{}
 			rwMutex.Lock()
 			tr.Attributes.State = statusFinished
+			close(tr.ActivateCh)
 			rwMutex.Unlock()
 		case <-tr.ActivateCh:
 			timer.Stop()

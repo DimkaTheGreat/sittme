@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
-	"github.com/DimkaTheGreat/sittme/models"
-	"github.com/DimkaTheGreat/sittme/routing"
+	"sittme/models"
+	"sittme/routing"
 )
 
 const (
