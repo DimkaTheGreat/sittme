@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"sittme/models"
+	"github.com/DimkaTheGreat/sittme/models"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo"

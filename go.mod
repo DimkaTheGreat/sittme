@@ -1,4 +1,4 @@
-module sittme
+module github.com/DimkaTheGreat/sittme
 
 go 1.13
 
