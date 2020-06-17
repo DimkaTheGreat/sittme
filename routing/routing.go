@@ -2,9 +2,10 @@ package routing
 
 import (
 	"net/http"
-	"sittme/models"
 	"sync"
 	"time"
+
+	"github.com/DimkaTheGreat/sittme/models"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
