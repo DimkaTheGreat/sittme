@@ -25,6 +25,7 @@ func Run(tr models.Translations, timeout int, port string) {
 	h := handler{
 		Translations: tr,
 		Timeout:      timeout,
+		mu:           &sync.RWMutex{},
 	}
 
 	e := echo.New()
@@ -63,9 +64,11 @@ func (h *handler) listTranslations(c echo.Context) error {
 
 	var translations []*models.Translation
 
+	h.mu.RLock()
 	for _, translation := range h.Translations {
 		translations = append(translations, translation)
 	}
+	h.mu.RUnlock()
 	c.JSONPretty(http.StatusOK, translations, "  ")
 
 	return nil

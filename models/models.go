@@ -54,16 +54,15 @@ func (translations Translations) LoadTestData() {
 
 func DeleteByID(translations Translations, id string) error {
 
-	rwMutex := &sync.RWMutex{}
-	rwMutex.Lock()
-	defer rwMutex.Unlock()
+	mu := &sync.Mutex{}
 
 	_, ok := translations[id]
 	if !ok {
 		return wrongIDError
 	}
-
+	mu.Lock()
 	delete(translations, id)
+	mu.Unlock()
 
 	return nil
 
@@ -88,10 +87,10 @@ func ActivateByID(translations Translations, id string) error {
 
 	}
 
-	rwMutex := sync.RWMutex{}
-	rwMutex.Lock()
-	defer rwMutex.Unlock()
+	mu := &sync.Mutex{}
+	mu.Lock()
 	tr.Attributes.State = statusActivated
+	mu.Unlock()
 	return nil
 
 }
@@ -113,10 +112,10 @@ func InterruptTranslation(translations Translations, id string, timeout int) err
 		return errors.New("Cant interrupt not activated translation")
 
 	}
-	rwMutex := &sync.RWMutex{}
-	rwMutex.Lock()
+	mu := &sync.Mutex{}
+	mu.Lock()
 	tr.Attributes.State = statusInterrupted
-	rwMutex.Unlock()
+	mu.Unlock()
 
 	tr.runTimer(timeout)
 
@@ -129,17 +128,17 @@ func (tr *Translation) runTimer(timeout int) {
 		timer := time.NewTimer(time.Second * time.Duration(timeout))
 		select {
 		case <-timer.C:
-			rwMutex := &sync.RWMutex{}
-			rwMutex.Lock()
+			mu := &sync.Mutex{}
+			mu.Lock()
 			tr.Attributes.State = statusFinished
+			mu.Unlock()
 			close(tr.ActivateCh)
-			rwMutex.Unlock()
 		case <-tr.ActivateCh:
 			timer.Stop()
-			rwMutex := &sync.RWMutex{}
-			rwMutex.Lock()
+			mu := &sync.Mutex{}
+			mu.Lock()
 			tr.Attributes.State = statusActivated
-			rwMutex.Unlock()
+			mu.Unlock()
 		}
 	}()
 
